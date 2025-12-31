@@ -16,7 +16,7 @@ export function About() {
     },
     {
       icon: Building2,
-      value: '15+',
+      value: '9+',
       label: 'Laboratorios equipados',
     },
   ];

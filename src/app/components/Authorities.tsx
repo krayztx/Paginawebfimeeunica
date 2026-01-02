@@ -19,7 +19,7 @@ export function Authorities() {
       ],
     },
     {
-      category: 'Director de Escuela Profesional',
+      category: 'Director de Escuela Profesional ',
       icon: <GraduationCap className="w-8 h-8" />,
       color: 'from-blue-500 to-blue-700',
       bgColor: 'bg-blue-50 dark:bg-blue-900/20',

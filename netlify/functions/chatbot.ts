@@ -1,6 +1,3 @@
-import fs from "fs";
-import path from "path";
-
 export const handler = async (event: any) => {
   try {
     if (!event.body) {
@@ -11,13 +8,6 @@ export const handler = async (event: any) => {
     }
 
     const { message } = JSON.parse(event.body);
-    const filePath = path.join(
-      process.cwd(),
-      "knowledge",
-      "info.txt"
-    );
-
-const knowledge = fs.readFileSync(filePath, "utf-8");
 
     const response = await fetch(
       "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
@@ -28,23 +18,7 @@ const knowledge = fs.readFileSync(filePath, "utf-8");
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          inputs: `
-        Eres un chatbot de ayuda para una página web.
-        
-        INFORMACIÓN DE LA PÁGINA:
-        ${knowledge}
-        
-        REGLAS:
-        - Responde SOLO usando la información anterior
-        - Si la pregunta no está relacionada con la página, responde:
-          "Solo puedo responder preguntas relacionadas con esta página."
-        - Responde en español, claro y amigable
-        
-        PREGUNTA DEL USUARIO:
-        ${message}
-        
-        RESPUESTA:
-        `,
+          inputs: `Usuario: ${message}\nAsistente:`,
           options: { wait_for_model: true },
         }),
       }

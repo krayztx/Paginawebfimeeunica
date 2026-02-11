@@ -13,7 +13,6 @@ export const handler = async (event: any) => {
     const { message } = JSON.parse(event.body);
     const filePath = path.join(
       process.cwd(),
-      "src",
       "knowledge",
       "info.txt"
     );

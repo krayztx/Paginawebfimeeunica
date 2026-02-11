@@ -8,6 +8,8 @@ import { Authorities } from "./components/Authorities";
 import { Teachers } from "./components/Teachers";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { useState } from "react";
+import Chatbot from "./components/Chatbot";
+
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<
@@ -35,6 +37,8 @@ export default function App() {
         )}
         <Footer />
       </div>
+      {/* 🔥 Chatbot flotante */}
+      <Chatbot />
     </ThemeProvider>
   );
 }

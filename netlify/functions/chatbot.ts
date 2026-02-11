@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 export const handler = async (event: any) => {
   try {
     const { message } = JSON.parse(event.body);

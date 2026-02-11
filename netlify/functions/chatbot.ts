@@ -18,26 +18,33 @@ export const handler = async (event: any) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          inputs: `Responde de forma clara y corta:\n${message}`,
+          inputs: message,
+          options: { wait_for_model: true },
         }),
       }
     );
 
     const data = await response.json();
 
+    // 🧠 Manejar todos los formatos posibles
+    let reply =
+      data?.[0]?.generated_text ??
+      data?.generated_text ??
+      (typeof data === "string" ? data : null);
+
+    if (!reply) {
+      reply = "🤖 Estoy pensando… intenta de nuevo en unos segundos.";
+    }
+
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        reply:
-          data?.[0]?.generated_text ??
-          "No pude responder en este momento 😢",
-      }),
+      body: JSON.stringify({ reply }),
     };
   } catch (error) {
     return {
       statusCode: 500,
       body: JSON.stringify({
-        reply: "Error interno del chatbot 😢",
+        reply: "⚠️ Error interno del chatbot",
       }),
     };
   }

@@ -18,7 +18,7 @@ export const handler = async (event: any) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          inputs: message,
+          inputs: `Usuario: ${message}\nAsistente:`,
           options: { wait_for_model: true },
         }),
       }
@@ -26,14 +26,28 @@ export const handler = async (event: any) => {
 
     const data = await response.json();
 
-    // 🧠 Manejar todos los formatos posibles
-    let reply =
-      data?.[0]?.generated_text ??
-      data?.generated_text ??
-      (typeof data === "string" ? data : null);
+    console.log("HF RAW RESPONSE:", JSON.stringify(data));
 
-    if (!reply) {
-      reply = "🤖 Estoy pensando… intenta de nuevo en unos segundos.";
+    let reply = "";
+
+    // Caso más común: array
+    if (Array.isArray(data) && data[0]?.generated_text) {
+      reply = data[0].generated_text;
+    }
+
+    // Caso alternativo
+    if (!reply && data?.generated_text) {
+      reply = data.generated_text;
+    }
+
+    // Limpieza: quitar prompt si viene incluido
+    if (reply.includes("Asistente:")) {
+      reply = reply.split("Asistente:").pop()!.trim();
+    }
+
+    // Fallback seguro
+    if (!reply || reply.length < 2) {
+      reply = "🤖 Hola, estoy listo para ayudarte.";
     }
 
     return {

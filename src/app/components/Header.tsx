@@ -5,8 +5,8 @@ import { ThemeToggle } from './ThemeToggle';
 import { motion } from 'motion/react';
 
 interface HeaderProps {
-  currentPage: 'home' | 'classroom' | 'authorities' | 'teachers';
-  setCurrentPage: (page: 'home' | 'classroom' | 'authorities' | 'teachers') => void;
+  currentPage: 'home' | 'authorities' | 'teachers';
+  setCurrentPage: (page: 'home' | 'authorities' | 'teachers') => void;
 }
 
 export function Header({ currentPage, setCurrentPage }: HeaderProps) {
@@ -23,21 +23,15 @@ export function Header({ currentPage, setCurrentPage }: HeaderProps) {
       e.preventDefault();
     }
     
-    if (currentPage === 'classroom') {
-      setCurrentPage('home');
-      setTimeout(() => {
-        const element = document.querySelector(href);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
-    } else {
-      const element = document.querySelector(href);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
     }
     setIsMenuOpen(false);
+  };
+
+  const handleAulaVirtualClick = () => {
+    window.open('https://fimeeunica.milaulas.com/login/index.php?loginredirect=1', '_blank');
   };
 
   return (
@@ -129,10 +123,10 @@ export function Header({ currentPage, setCurrentPage }: HeaderProps) {
               <Button
                 size="sm"
                 className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:from-blue-700 dark:to-blue-800 dark:hover:from-blue-600 dark:hover:to-blue-700 text-white shadow-lg"
-                onClick={() => setCurrentPage(currentPage === 'home' ? 'classroom' : 'home')}
+                onClick={handleAulaVirtualClick}
               >
                 <GraduationCap className="w-4 h-4 md:mr-2" />
-                <span className="hidden lg:inline">{currentPage === 'home' ? 'Aula Virtual' : 'Inicio'}</span>
+                <span className="hidden lg:inline">Aula Virtual</span>
               </Button>
             </motion.div>
           </div>
@@ -210,12 +204,12 @@ export function Header({ currentPage, setCurrentPage }: HeaderProps) {
             <Button
               className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:from-blue-700 dark:to-blue-800 dark:hover:from-blue-600 dark:hover:to-blue-700 text-white"
               onClick={() => {
-                setCurrentPage(currentPage === 'home' ? 'classroom' : 'home');
+                handleAulaVirtualClick();
                 setIsMenuOpen(false);
               }}
             >
               <GraduationCap className="w-4 h-4 mr-2" />
-              {currentPage === 'home' ? 'Aula Virtual' : 'Volver a Inicio'}
+              Aula Virtual
             </Button>
           </motion.div>
         )}

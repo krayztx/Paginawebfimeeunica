@@ -1,69 +1,43 @@
 export const handler = async (event: any) => {
-  console.log("Function invoked");
-
   try {
-    console.log("Raw body:", event.body);
-
     if (!event.body) {
-      console.log("No body received");
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: "No body received" }),
+        body: JSON.stringify({ reply: "Mensaje vacío" }),
       };
     }
 
     const { message } = JSON.parse(event.body);
-    console.log("User message:", message);
-
-    console.log("API KEY exists:", !!process.env.OPENAI_API_KEY);
 
     const response = await fetch(
-      "https://api.openai.com/v1/chat/completions",
+      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          Authorization: `Bearer ${process.env.HF_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [
-            { role: "system", content: "Responde de forma clara y corta." },
-            { role: "user", content: message },
-          ],
+          inputs: `Responde de forma clara y corta:\n${message}`,
         }),
       }
     );
 
-    console.log("OpenAI status:", response.status);
-
     const data = await response.json();
-    console.log("OpenAI response:", JSON.stringify(data));
-
-    if (!response.ok) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          error: "OpenAI error",
-          details: data,
-        }),
-      };
-    }
 
     return {
       statusCode: 200,
       body: JSON.stringify({
-        reply: data.choices?.[0]?.message?.content ?? "Sin respuesta",
+        reply:
+          data?.[0]?.generated_text ??
+          "No pude responder en este momento 😢",
       }),
     };
-  } catch (error: any) {
-    console.log("CATCH ERROR:", error);
-
+  } catch (error) {
     return {
       statusCode: 500,
       body: JSON.stringify({
-        error: "Server error",
-        details: error.message,
+        reply: "Error interno del chatbot 😢",
       }),
     };
   }

@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+
 export const handler = async (event: any) => {
   try {
     if (!event.body) {
@@ -8,21 +11,14 @@ export const handler = async (event: any) => {
     }
 
     const { message } = JSON.parse(event.body);
-    const systemPrompt = `
-    Eres un chatbot de ayuda para una página web específica.
-    
-    Información de la página:
-    - Esta página es un proyecto académico la cual fue creada para brindar todo tipo de ayuda e informacion de la FIMEE UNICA.
-    - El sitio informa y ayuda a los usuarios a entender el contenido de la página.
-    - Responde SOLO preguntas relacionadas con la página.
-    
-    Reglas:
-    - Si el usuario pregunta algo que no tiene relación con la página, responde:
-      "Solo puedo responder preguntas relacionadas con esta página."
-    - Responde en español.
-    - Sé claro, breve y amigable.
-    `;
+    const filePath = path.join(
+      process.cwd(),
+      "src",
+      "knowledge",
+      "info.txt"
+    );
 
+const knowledge = fs.readFileSync(filePath, "utf-8");
 
     const response = await fetch(
       "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
@@ -32,12 +28,23 @@ export const handler = async (event: any) => {
           Authorization: `Bearer ${process.env.HF_API_KEY}`,
           "Content-Type": "application/json",
         },
-         body: JSON.stringify({
+        body: JSON.stringify({
           inputs: `
-        ${systemPrompt}
+        Eres un chatbot de ayuda para una página web.
         
-        Usuario: ${message}
-        Asistente:
+        INFORMACIÓN DE LA PÁGINA:
+        ${knowledge}
+        
+        REGLAS:
+        - Responde SOLO usando la información anterior
+        - Si la pregunta no está relacionada con la página, responde:
+          "Solo puedo responder preguntas relacionadas con esta página."
+        - Responde en español, claro y amigable
+        
+        PREGUNTA DEL USUARIO:
+        ${message}
+        
+        RESPUESTA:
         `,
           options: { wait_for_model: true },
         }),
